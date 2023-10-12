@@ -1,49 +1,22 @@
-Overview
-========
+Proyecto de Ingeniería de Datos: Extracción y Análisis de Datos de Ligas de Fútbol Europeas
+Este proyecto utiliza Python y varias bibliotecas, incluyendo pandas, time, random, os y datetime para extraer, procesar y analizar datos de las principales ligas de fútbol europeas.
 
-Welcome to Astronomer! This project was generated after you ran 'astro dev init' using the Astronomer CLI. This readme describes the contents of the project, as well as how to run Apache Airflow on your local machine.
+Extracción y Procesamiento de Datos
+El script define dos funciones principales: get_data y data_processing.
 
-Project Contents
-================
+La función get_data toma una URL y el nombre de una liga como argumentos. Utiliza la biblioteca pandas para leer los datos HTML de la URL proporcionada. Los datos se procesan y se limpian, y se añaden dos nuevas columnas: ‘LIGA’, que contiene el nombre de la liga, y ‘CREATED_AT’, que contiene la fecha actual. La función devuelve un DataFrame de pandas con los datos procesados.
 
-Your Astro project contains the following files and folders:
+La función data_processing toma un DataFrame como argumento. Esta función llama a la función get_data para cada liga y URL en el DataFrame proporcionado. Los DataFrames resultantes se concatenan en un solo DataFrame, que se devuelve.
 
-- dags: This folder contains the Python files for your Airflow DAGs. By default, this directory includes two example DAGs:
-    - `example_dag_basic`: This DAG shows a simple ETL data pipeline example with three TaskFlow API tasks that run daily.
-    - `example_dag_advanced`: This advanced DAG showcases a variety of Airflow features like branching, Jinja templates, task groups and several Airflow operators.
-- Dockerfile: This file contains a versioned Astro Runtime Docker image that provides a differentiated Airflow experience. If you want to execute other commands or overrides at runtime, specify them here.
-- include: This folder contains any additional files that you want to include as part of your project. It is empty by default.
-- packages.txt: Install OS-level packages needed for your project by adding them to this file. It is empty by default.
-- requirements.txt: Install Python packages needed for your project by adding them to this file. It is empty by default.
-- plugins: Add custom or community plugins for your project to this file. It is empty by default.
-- airflow_settings.yaml: Use this local-only file to specify Airflow Connections, Variables, and Pools instead of entering them in the Airflow UI as you develop DAGs in this project.
+Estas funciones permiten extraer y procesar datos de varias ligas de fútbol a partir de URLs proporcionadas. Los datos procesados están listos para ser cargados en una base de datos o utilizados para análisis posteriores.
 
-Deploy Your Project Locally
-===========================
+Automatización del Flujo de Trabajo con Apache Airflow
+Además, el proyecto utiliza Apache Airflow para automatizar y programar el flujo de trabajo de extracción, procesamiento y carga (ETL) de los datos. Se define un DAG (Directed Acyclic Graph) en Airflow que consta de tres tareas principales:
 
-1. Start Airflow on your local machine by running 'astro dev start'.
+EXTRACT_FOTBALL_DATA: Esta tarea utiliza un operador Python para llamar a la función extract_info, que extrae y procesa los datos utilizando las funciones definidas anteriormente.
+upload_data_stage: Esta tarea utiliza un operador Snowflake para cargar los datos procesados en una tabla stage en Snowflake.
+ingest_table: Esta tarea también utiliza un operador Snowflake para ingerir los datos desde la tabla stage a la tabla final en Snowflake.
+Estas tareas se ejecutan en secuencia, lo que significa que cada tarea depende del éxito de la tarea anterior.
 
-This command will spin up 4 Docker containers on your machine, each for a different Airflow component:
-
-- Postgres: Airflow's Metadata Database
-- Webserver: The Airflow component responsible for rendering the Airflow UI
-- Scheduler: The Airflow component responsible for monitoring and triggering tasks
-- Triggerer: The Airflow component responsible for triggering deferred tasks
-
-2. Verify that all 4 Docker containers were created by running 'docker ps'.
-
-Note: Running 'astro dev start' will start your project with the Airflow Webserver exposed at port 8080 and Postgres exposed at port 5432. If you already have either of those ports allocated, you can either [stop your existing Docker containers or change the port](https://docs.astronomer.io/astro/test-and-troubleshoot-locally#ports-are-not-available).
-
-3. Access the Airflow UI for your local Airflow project. To do so, go to http://localhost:8080/ and log in with 'admin' for both your Username and Password.
-
-You should also be able to access your Postgres Database at 'localhost:5432/postgres'.
-
-Deploy Your Project to Astronomer
-=================================
-
-If you have an Astronomer account, pushing code to a Deployment on Astronomer is simple. For deploying instructions, refer to Astronomer documentation: https://docs.astronomer.io/cloud/deploy-code/
-
-Contact
-=======
-
-The Astronomer CLI is maintained with love by the Astronomer team. To report a bug or suggest a change, reach out to our support.
+Resumen
+En resumen, este proyecto demuestra una sólida comprensión de las técnicas modernas de ingeniería de datos, incluyendo la extracción y procesamiento de datos con Python y pandas, la automatización del flujo de trabajo con Apache Airflow, y el almacenamiento y análisis de datos con Snowflake.
